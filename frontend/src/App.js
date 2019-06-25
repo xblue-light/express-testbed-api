@@ -9,21 +9,27 @@ import Navbar from './components/Navbar';
 import Register from './components/Register';
 import Login from './components/Login';
 import Home from './components/Home';
-import Index from './components/Index';
+import ViolationsIndex from './components/ViolationsTable/ViolationsIndex';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import EditList from './components/EditList';
+//import EditList from './components/EditList';
+import EditViolation from './components/ViolationsTable/EditViolation';
 import NewList from './components/NewList';
 import './App.css';
 
-if(localStorage.jwtToken) {
+// Index
+import Index from './components/Index';
+
+if (localStorage.jwtToken) {
   setAuthToken(localStorage.jwtToken);
   const decoded = jwt_decode(localStorage.jwtToken);
   store.dispatch(setCurrentUser(decoded));
-  const currentTime = Date.now() / 1000;
+  const currentTime = Date.now() / 5000;
   if(decoded.exp < currentTime) {
     store.dispatch(logoutUser());
     window.location.href = '/login'
   }
+} else {
+  console.log("Local storage is empty, no token found!");
 }
 
 class App extends Component {
@@ -38,12 +44,13 @@ class App extends Component {
               </div>
             </div>
             <Route exact path="/" component={ Home } />
-            <div className="container">
+            <div className="container-fluid">
               <Route exact path="/register" component={ Register } />
               <Route exact path="/login" component={ Login } />
-              <Route exact path="/index" component={ Index } />
+              <Route exact path="index" component={Index} />
+              <Route exact path="/violations" component={ ViolationsIndex } />
               <Route exact path="/create" component={ NewList } />
-              <Route path='/edit/:id' component={ EditList } />
+              <Route path='/edit/:id' component={ EditViolation } />
             </div>
           </div>
         </Router>

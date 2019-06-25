@@ -9,6 +9,7 @@ const validateRegisterInput = require('../validation/register');
 const validateLoginInput = require('../validation/login');
 const User = require('../models/User');
 const List = require('../models/List');
+const Violation = require('../models/Violation');
 
 // Route => '/api/users/register'
 router.post('/register', function(req, res) {
@@ -116,9 +117,24 @@ router.get('/me', passport.authenticate('jwt', { session: false }), (req, res) =
 });
 
 // GET ALL LISTS
-router.get('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// router.get('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     try {
+//         const docs = await List
+//             .find({ createdBy: req.user.id })
+//             .lean()
+//             .exec();
+
+//         res.status(200).json(docs);
+//     } catch (e) {
+//         console.error(e);
+//         res.status(400).end();
+//     }
+// });
+
+// GET ALL VIOLATION LIST
+router.get('/violation', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const docs = await List
+        const docs = await Violation
             .find({ createdBy: req.user.id })
             .lean()
             .exec();
@@ -130,10 +146,10 @@ router.get('/list', passport.authenticate('jwt', { session: false }), async (req
     }
 });
 
-// POST LIST
-router.post('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// POST VIOLATION LIST
+router.post('/violation', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const doc = await List.create({ ...req.body, createdBy: req.user.id });
+        const doc = await Violation.create({ ...req.body, createdBy: req.user.id });
         res.status(200).json(doc);
     } catch(e) {
         console.error(e);
@@ -141,11 +157,34 @@ router.post('/list', passport.authenticate('jwt', { session: false }), async (re
     }
 });
 
+// POST LIST
+// router.post('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     try {
+//         const doc = await List.create({ ...req.body, createdBy: req.user.id });
+//         res.status(200).json(doc);
+//     } catch(e) {
+//         console.error(e);
+//         res.status(400).end();
+//     }
+// });
+
 // REMOVE LIST
-router.delete('/list/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// router.delete('/list/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     try {
+//         await List.findByIdAndDelete({ _id: req.params.id });
+//         res.status(200).json("List has been removed!");
+//     } catch (e) {
+//         console.error(e);
+//         res.status(400).end();
+//     }
+// });
+
+
+// VIOLATION DELETE
+router.delete('/violation/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        await List.findByIdAndDelete({ _id: req.params.id });
-        res.status(200).json("List has been removed!");
+        await Violation.findByIdAndDelete({ _id: req.params.id });
+        res.status(200).json("Violation record has been removed!");
     } catch (e) {
         console.error(e);
         res.status(400).end();
@@ -153,9 +192,20 @@ router.delete('/list/delete/:id', passport.authenticate('jwt', { session: false 
 });
 
 // GET LIST BY ID
-router.get('/list/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+// router.get('/list/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+//     try {
+//         const doc = await List.findById({ _id: req.params.id });
+//         res.status(200).json(doc);
+//     } catch (e) {
+//         console.error(e);
+//         res.status(400).end();
+//     }
+// });
+
+// GET VIOLATION BY ID
+router.get('/violation/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
-        const doc = await List.findById({ _id: req.params.id });
+        const doc = await Violation.findById({ _id: req.params.id });
         res.status(200).json(doc);
     } catch (e) {
         console.error(e);
@@ -164,21 +214,48 @@ router.get('/list/edit/:id', passport.authenticate('jwt', { session: false }), a
 });
 
 // UPDATE LIST
-router.post('/list/update/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-    List.findById(req.params.id, function(err, list) {
-        if (!list)
+// router.post('/list/update/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+//     List.findById(req.params.id, function(err, list) {
+//         if (!list)
+//             res.status(404).send("Data is not found");
+//         else {
+
+//             list.name = req.body.name;
+//             list.address = req.body.address;
+//             list.country = req.body.country;
+//             list.city = req.body.city;
+//             list.state = req.body.state;
+//             list.phone = req.body.phone;
+//             list.description = req.body.description;
+
+//             list.save().then(response => {
+//                 res.status(200).json({...req.body});
+//             })
+//             .catch(err => {
+//                 res.status(400).send("Not able to update the database");
+//             });
+//         }
+//     });
+// });
+
+
+// UPDATE VIOLATION
+router.post('/violation/update/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+    Violation.findById(req.params.id, function(err, violation) {
+        if (!violation)
             res.status(404).send("Data is not found");
         else {
 
-            list.name = req.body.name;
-            list.address = req.body.address;
-            list.country = req.body.country;
-            list.city = req.body.city;
-            list.state = req.body.state;
-            list.phone = req.body.phone;
-            list.description = req.body.description;
+            violation.name = req.body.name;
+            violation.country = req.body.country;
+            violation.registrationNumber = req.body.registrationNumber;
+            violation.category = req.body.category;
+            violation.violationOwner = req.body.violationOwner;
+            violation.typeOfDocument = req.body.typeOfDocument;
+            violation.status = req.body.status;
+            violation.issuedBye = req.body.issuedBye;
 
-            list.save().then(response => {
+            violation.save().then(response => {
                 res.status(200).json({...req.body});
             })
             .catch(err => {

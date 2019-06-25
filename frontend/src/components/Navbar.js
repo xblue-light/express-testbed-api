@@ -14,32 +14,40 @@ class Navbar extends Component {
 
     render() {
         const {isAuthenticated, user} = this.props.auth;
+
         const authLinks = (
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
                     <Link className="nav-link" to="/"><i className="fa fa-home"></i></Link>
                 </li>
-                <li className="nav-item">
+                {/* <li className="nav-item">
                     <Link className="nav-link" to="/index">Contacts</Link>
+                </li> */}
+                <li className="nav-item">
+                    <Link className="nav-link" to="/violations">Нарушения</Link>
                 </li>
                 <button className="nav-link logout-btn" onClick={this.onLogout.bind(this)}>
                     <img src={user.avatar} alt={user.name} title={user.name}
                          className="rounded-circle"
                          style={{ width: '25px', marginRight: '5px'}} />
-                         Logout
+                         Админ
                 </button>
             </ul>
         )
+
+
         const guestLinks = (
             <ul className="navbar-nav ml-auto">
                 <li className="nav-item">
-                    <Link className="nav-link" to="/register">Sign Up</Link>
+                    <Link className="nav-link" to="/register">Нова Регистрация</Link>
                 </li>
                 <li className="nav-item">
-                    <Link className="nav-link" to="/login">Sign In</Link>
+                    <Link className="nav-link" to="/login">Вход</Link>
                 </li>
             </ul>
         )
+
+
         return (
             <nav className="navbar navbar-expand-lg">
                 <Link className="navbar-brand" to="/">Redux Node Auth</Link>

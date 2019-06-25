@@ -53,7 +53,8 @@ class Login extends Component {
         const {errors} = this.state;
         return(
         <div className="container" style={{ marginTop: '50px', width: '700px'}}>
-            <h2 style={{marginBottom: '40px'}}>Login</h2>
+            <img src="./logo.png" className="img-responsive logo" alt="logo" />
+            <p className="text-center" style={{marginBottom: '40px'}}>Добре дошли! Влезте във вашият акаунт.</p>
             <form onSubmit={ this.handleSubmit }>
                 <div className="form-group">
                     <input
@@ -83,7 +84,10 @@ class Login extends Component {
                 </div>
                 <div className="form-group">
                     <button type="submit" className="btn btn-primary">
-                        Login User
+                        Вход
+                    </button>
+                    <button type="submit" className="btn btn-primary btn-registration" href="/registration" style={{marginLeft: "15px"}}>
+                        Нова регистрация
                     </button>
                 </div>
             </form>

@@ -1,0 +1,169 @@
+.violationsTableWrapper .rt-td {
+    padding: 15px !important;
+    text-align: center;
+    font-size: 13px;
+}
+.violationsTableWrapper {
+    border: none !important;
+}
+.violationsTableWrapper .rt-tr .rt-resizable-header-content {
+    padding: 10px;
+    background-color: #f1f1f3;
+    font-weight: bold;
+    font-family: 'OpenSans', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: 1.42;
+    letter-spacing: normal;
+    text-align: center;
+    color: #4d4f5c;
+}
+.ReactTable .-pagination .-btn {
+    border: 0 !important;
+    padding: 10px !important;
+    font-size: 0 !important;
+    border-radius: 0 !important;
+}
+.logo {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+}
+.rt-thead.-headerGroups {
+    display: none;
+}
+.MuiInputBase-input {
+    font-size: 13px !important;
+}
+.customSearchInput {
+    border-bottom: 1px solid #f0f0f7;
+    padding:  3.5px;
+    font-size: 13px;
+}
+.MuiPaper-rounded {
+    border-radius: none !important;
+}
+.heading-violations {
+    margin-top: 2em;
+    padding: 0;
+}
+.ReactTable .-pagination {
+    box-shadow: none !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+    padding: 25px;
+}
+.ReactTable .rt-thead .rt-th {
+    border: none !important;
+}
+.btn-newviolation {
+    float: right;
+    background: #329600;
+    border-color: #329600;
+}
+.btn-newviolation:hover,
+.btn-newviolation:focus {
+    background: #3db600;
+    border-color: #3db600;
+    transition: all .2s linear;
+}
+.heading-violations h2 {
+    font-size: 28px;
+    color: #3163aa;
+    font-weight: normal;
+}
+.MuiPaper-elevation1 {
+    box-shadow: none !important;
+}
+.MuiInput-underline:before {
+    border-bottom: none !important;
+}
+.exportBtn {
+    color: #3163aa;
+    font-size: 12px;
+    line-height: 1.42;
+    position: relative;
+    font-weight: bold;
+    top: 10px;
+}
+.ReactTable .-pagination .-pageJump input {
+    width: 30px !important;
+}
+.ReactTable .-pagination input, 
+.ReactTable .-pagination select {
+    border: none !important;
+    padding: 0 !important;
+}
+.labelDatePicker {
+    position: relative;
+    display: block;
+    top: 10px;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 15px;
+}
+.searchIcon {
+    color: #a6a7ad;
+    font-size: 18px !important;
+    position: relative;
+    top: 5.5px;
+    right: 20px;
+}
+body {
+    background: #f0f0f7;
+}
+.main-table-header {
+    background: #fff;
+    margin-top: 2em;
+    padding: 15px;
+}
+.violationsTableWrapper .custompagination .-btn {
+    background-color: transparent !important;
+}
+.violationsTableWrapper .custompagination .-btn:hover{
+    color: #4d4f5c !important;
+}
+.violationsTableWrapper .-pagination .-center {
+    justify-content: flex-end !important;
+}
+.violationsTableWrapper .rt-thead .rt-tr {
+    background-color: #f1f1f3;
+}
+
+.rt-thead.-filters .rt-tr {
+    background-color: #fff;
+}
+.violationsTableWrapper .rt-td:not(:nth-child(8)) {
+    background: transparent !important;
+}
+.customEditID {
+    background: transparent !important;
+    box-shadow: none;
+    cursor: pointer;
+    color: #3163aa;
+    font-weight: bold;
+}
+
+.upwardArrow{
+    font-size: 13px !important;
+    position: relative;
+    top: 1.5px;
+    color: #4d4f5c;
+    font-weight: bold;
+}
+
+.violationsTableWrapper .-headerGroups .rt-th, .violationsTableWrapper .-headerGroups .rt-td {
+    background-color: #fff !important;
+    padding: 15px !important;
+    box-shadow: none !important;
+}
+
+.papperWrapper{
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.violationsTableWrapper .rt-thead.-filters .rt-th {
+    padding: 15px;
+}
