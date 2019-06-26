@@ -19,6 +19,7 @@
     "match-sorter": "^3.1.1",
     "namor": "^1.1.2",
     "react": "^16.8.1",
+    "react-datepicker": "^2.7.0",
     "react-dom": "^16.8.1",
     "react-redux": "^6.0.0",
     "react-router-dom": "^4.3.1",

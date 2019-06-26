@@ -13,6 +13,12 @@ import Container from '@material-ui/core/Container';
 import matchSorter from 'match-sorter';
 import { makeData} from "../../utils/fakeDatabase";
 import AlphaDatePicker from './AlphaDatePicker'
+//import { format } from 'date-fns'
+import Button from '@material-ui/core/Button';
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
+
+
 
 // ТОDO: Implement configuration
 
@@ -20,18 +26,28 @@ export default class Index extends Component {
   
   constructor(props) {
     super(props);
+    this._startDate = null;
+    this._endDate = null;
     this.state = { 
-      list: [],
-      date: new Date(),
-      data: makeData(), // Fake JSON data array
+      data: makeData(),
       violations: [],
-      filteredViolations: []
+      filteredViolations: [],
+      startDate: null,
+      endDate: null,
+      dates: [
+        {
+          a: '',
+          b: '',
+          c: '',
+        }
+      ]
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.handleDate = this.handleDate.bind(this);
+    this.handleChangeStart = this.handleChangeStart.bind(this);
+    this.handleChangeEnd = this.handleChangeEnd.bind(this);
+    //this.compareFromToDates = this.compareFromToDates.bind(this);
   }
-
 
   async axiosGETRequest(){
     let res = await axios.get('/api/users/violation');
@@ -48,52 +64,157 @@ export default class Index extends Component {
     });
   }
 
-  handleDate(dateValue){
-    console.log(dateValue);
+  // compareFromToDates(){
+  //   this.setState(prevState => ({
+  //     dates: {
+  //         ...prevState.dates,
+  //         [prevState.dates[0].a]: cdate,
+  //     },
+  //   }));
+  // }
 
-    this.setState({
-      date: dateValue
-    })
+  handleChangeStart(date){
+    if(date !== null){
+      let e = new Date(date);
+      let month = e.getMonth()+1;
+      let cdate = (e.getDate()+'.'+month+'.'+e.getFullYear());
+      //let parsedFrom = date.toJSON();
+      console.log(date);
+      console.log(cdate);
+      this._startDate = cdate;
+      if (this._endDate) {
+        this.setState({ 
+          startDate: date,
+          endDate: this._endDate,
+          filteredViolations: matchSorter(this.state.violations, cdate, {keys: ['violationCreated']}) 
+        })
+      }
+
+      // this.setState(prevState => ({
+      //   dates: {
+      //       ...prevState.dates,
+      //       //[prevState.dates[0].f]: date,
+      //       f: date
+      //   },
+      // }));
+
+      this.setState({
+        dates: {
+          a: date,
+          b: new Date()
+        }
+      })
+
+      console.log(this.state);
+    }
+    else {
+      console.log("date variable is null");
+      this.setState({
+        startDate: null,
+        filteredViolations: this.state.violations
+      })
+    }
   }
 
+  handleChangeEnd(date){
+    if(date !== null){
+      let e = new Date(date);
+      let month = e.getMonth()+1;
+      let cdate = (e.getDate()+'.'+Number(0)+month+'.'+e.getFullYear());
+      //let parsedTo = date.toJSON();
+      console.log(date);
+      console.log(cdate);
 
-  componentDidMount(){
+      this.setState({ 
+        endDate: date,
+        filteredViolations: matchSorter(this.state.violations, cdate, {keys: ['violationCreated']}) 
+      })
+
+      // this.setState(prevState => ({
+      //   dates: {
+      //       ...prevState.dates,
+      //       [prevState.dates[0].endDate]: date,
+      //   },
+      // }));
+    }
+    else {
+      console.log("date variable is null");
+      this.setState({
+        endDate: null,
+        filteredViolations: this.state.violations
+      })
+    }
+  }
+
+  componentWillMount(){
     this.axiosGETRequest();
   }
 
   render() {
+    
     return (
-      
       <Container maxWidth="xl">
-        <div className="container-fluid heading-violations">
-          <div className="row">
-            <div className="col-xs-12 col-md-8"><h2>Нарушения</h2></div>
-            <div className="col-xs-12 col-md-4"><button className="btn btn-primary btn-newviolation">Въведи нарушение</button></div>
-          </div>
-        </div>
-
-        <Grid container spacing={3}>
+        <Grid container spacing={0}>
+          <Grid item xs={12} md={8}><h2>Нарушения</h2></Grid>
           <Grid item xs={12} md={4}>
+          <Button variant="contained" color="primary" className="primary-btn" style={{float: 'right'}}>
+            Въведи нарушение
+          </Button>
+          </Grid>
+        </Grid>
 
-            <AlphaDatePicker handleDateProps={this.handleDate} defaultDate={this.state.date} />
+        <Grid container spacing={0} style={{background: "#FFFFFF", padding: '15px'}}>
+          <Grid item xs={12} md={6}>
+          
+          <AlphaDatePicker 
+            startDate={this.state.startDate} 
+            endDate={this.state.endDate} 
+            onChangeStart={this.handleChangeStart} 
+            onChangeEnd={this.handleChangeEnd} 
+            compareFromToDates={this.compareFromToDates}
+          />
+
+          {/* <DatePicker
+              className="inputCustom"
+              selected={this.state.startDate}
+              selectsStart
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              onChange={this.handleChangeStart}
+              placeholderText="Избери дата"
+              dateFormat="dd/MM/yyyy"
+          />
+          &nbsp;
+          &nbsp;
+          <DatePicker
+              className="inputCustom"
+              selected={this.state.endDate}
+              selectsEnd
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              onChange={this.handleChangeEnd}
+              minDate={this.state.startDate}
+              placeholderText="Избери дата"
+              dateFormat="dd/MM/yyyy"
+          /> */}
 
           </Grid>
-          <Grid item xs={12} md={4}>
-          <Input
+          <Grid item xs={12} md={3}>
+            <Input
                 type="text"
-                style={{width: "270px", marginTop: '16px'}}
+                style={{width: "270px"}}
                 className="customSearchInput"
                 onChange={this.handleInputChange}
                 placeholder="Търсене в документа"
               />
               <Icon className="searchIcon">search</Icon>
           </Grid>
-          <Grid item xs={12} md={4}>
-          <Paper className="xs-3 papperWrapper">
-                <a onClick={() => alert("Exporting some data...")} 
-                   className="exportBtn" href="#!">ЕКСПОРТ <Icon style={{fontSize:"13px", position: "relative", top: "1px", marginTop: '16px'}}>file_copy</Icon>
-                </a>
-              </Paper>
+          <Grid item xs={12} md={3}>
+            <Paper className="xs-3 papperWrapper">
+              <a onClick={() => alert("Exporting some data...")} 
+                  className="exportBtn" href="#!">ЕКСПОРТ <Icon style={{fontSize:"13px", position: "relative", top: "1px"}}>file_copy</Icon>
+              </a>
+            </Paper>
           </Grid>
         </Grid>
         <Grid container spacing={3}>
@@ -106,7 +227,7 @@ export default class Index extends Component {
                   PaginationComponent={CustomPaginationComponent}
                   previousText={<Icon>chevron_left</Icon>}
                   nextText={<Icon>chevron_right</Icon>}
-                  defaultPageSize={5} 
+                  defaultPageSize={10} 
                   className="-highlight violationsTableWrapper"
                   defaultFilterMethod={(filter, row) => String(row[filter.id]) === filter.value}
                   getTdProps={(state, rowInfo, column, row) => {
@@ -143,10 +264,10 @@ export default class Index extends Component {
                           ЧАС/ДАТА <Icon className="upwardArrow">arrow_upward</Icon>
                         </span>
                       ),
-                      id: "createdAt",
-                      accessor: d => d.createdAt,
+                      id: "violationCreated",
+                      accessor: d => d.violationCreated,
                       filterMethod: (filter, rows) =>
-                        matchSorter(rows, filter.value, { keys: ["createdAt"] }),
+                        matchSorter(rows, filter.value, { keys: ["violationCreated"] }),
                       filterAll: true
                     },
                     // #3

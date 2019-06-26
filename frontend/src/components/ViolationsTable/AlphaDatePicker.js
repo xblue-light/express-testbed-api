@@ -1,12 +1,9 @@
-import React, {useState , useEffect} from 'react';
-import DateFnsUtils from "@date-io/date-fns";
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from "@material-ui/pickers";
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/core/styles';
-import { isSameDay } from 'date-fns/esm/fp';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
+//import { format } from 'date-fns'
 
 // CSS
 const useStyles = makeStyles({
@@ -21,62 +18,59 @@ const useStyles = makeStyles({
   }
 });
 
+//const AlphaDatePicker = ({ startDate, endDate, onChangeStart, onChangeEnd, resetInitialState }) => {
 const AlphaDatePicker = (props) => {
 
     const classes = useStyles();
-    //const [selectedDate, handleDateChange] = useState(new Date());
-    
-    //console.log(selectedDate);
-    // console.log(props.name);
-
-    // function handleDateChange(date){
-    //     console.log(selectedDate);
-    // }
+    // const [selectedDate, handleDateChange] = React.useState(new Date());
 
     // useEffect(() => {
-    //     handleDateChange(selectedDate);
+    //         handleDateChange(selectedDate);
+    //         console.log(selectedDate)
     // }, [selectedDate])
+
 
     return (
         <React.Fragment>
             <Grid container className={classes.grid}>
-                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils} >
+                    {/* <span style={{position: 'relative', top: '25px', right: '5px'}}>От</span> */}
                     <KeyboardDatePicker
-
+                        disableFuture
+                        clearable
+                        autoOk
                         margin="normal"
                         className={classes.datePickerInput}
                         id="mui-pickers-date"
-                        format="d MMM yyyy"
-                        value={props.defaultDate}
-                        onChange= {
-                            date => {
-                                props.handleDateProps(date)
-                            }
-                        }
+                        format="dd-MM-yyyy"
+                        placeholder="Избери дата от:"
+                        value={props.startDate}                        
+                        onChange= { date => { props.onChangeStart(date) } }
                         KeyboardButtonProps={{
                             'aria-label': 'change date',
                         }}
                     />
-                    {/* <KeyboardDatePicker 
+                    {/* <span style={{position: 'relative', top: '25px', left: '10px'}}>До</span> */}
+                    <KeyboardDatePicker
+                        disableFuture
+                        clearable
                         margin="normal"
                         className={classes.datePickerInput}
                         id="mui-pickers-date"
-                        value={selectedDate}
-                        style={{marginLeft: "15px"}}
-                        onChange={handleDateChange}
+                        format="dd-MM-yyyy"
+                        onAccept={props.compareFromToDates}
+                        placeholder="Избери дата до:"
+                        style={{marginLeft: '15px'}}
+                        value={props.endDate}
+                        onChange= { date => { props.onChangeEnd(date) } }
                         KeyboardButtonProps={{
                             'aria-label': 'change date',
                         }}
-                    /> */}
+                    />
                 </MuiPickersUtilsProvider>
             </Grid>
         </React.Fragment>
     );
 }
-
-// function AlphaDatePicker(props) {
-
-    
-// }
 
 export default AlphaDatePicker;

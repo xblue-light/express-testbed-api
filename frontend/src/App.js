@@ -10,7 +10,6 @@ import Register from './components/Register';
 import Login from './components/Login';
 import Home from './components/Home';
 import ViolationsIndex from './components/ViolationsTable/ViolationsIndex';
-import 'bootstrap/dist/css/bootstrap.min.css';
 //import EditList from './components/EditList';
 import EditViolation from './components/ViolationsTable/EditViolation';
 import NewList from './components/NewList';
