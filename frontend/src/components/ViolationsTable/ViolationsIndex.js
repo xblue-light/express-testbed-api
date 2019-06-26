@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ReactTable from "react-table";
-import "react-table/react-table.css";
 import { Link } from 'react-router-dom';
-import "./ViolationsTable.css";
 import Icon from '@material-ui/core/Icon';
-import CustomPaginationComponent from "./CustomPaginationComponent"
+import CustomPaginationComponent from "./CustomPaginationComponent";
 import Input from '@material-ui/core/Input';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
@@ -13,14 +11,16 @@ import Container from '@material-ui/core/Container';
 import matchSorter from 'match-sorter';
 import { makeData} from "../../utils/fakeDatabase";
 import AlphaDatePicker from './AlphaDatePicker'
-//import { format } from 'date-fns'
 import Button from '@material-ui/core/Button';
-// import DatePicker from "react-datepicker";
-// import "react-datepicker/dist/react-datepicker.css";
+import "react-table/react-table.css";
+import "./ViolationsTable.css";
+// import _ from 'underscore';
+// import {Map, Range} from 'immutable';
+//import { format } from 'date-fns'
 
 
-
-// ТОDO: Implement configuration
+// ТОDO: Implement configuration as suppose 
+// ...to always rendering the array for react-tables
 
 export default class Index extends Component {
   
@@ -28,6 +28,7 @@ export default class Index extends Component {
     super(props);
     this._startDate = null;
     this._endDate = null;
+
     this.state = { 
       data: makeData(),
       violations: [],
@@ -46,7 +47,6 @@ export default class Index extends Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleChangeStart = this.handleChangeStart.bind(this);
     this.handleChangeEnd = this.handleChangeEnd.bind(this);
-    //this.compareFromToDates = this.compareFromToDates.bind(this);
   }
 
   async axiosGETRequest(){
@@ -58,56 +58,39 @@ export default class Index extends Component {
     });
   }
 
+  componentWillMount(){
+    this.axiosGETRequest();
+  }
+
   handleInputChange(event){
     this.setState({
       filteredViolations: matchSorter(this.state.violations, event.target.value, {keys: ['violationOwner', 'country']})
     });
   }
 
-  // compareFromToDates(){
-  //   this.setState(prevState => ({
-  //     dates: {
-  //         ...prevState.dates,
-  //         [prevState.dates[0].a]: cdate,
-  //     },
-  //   }));
-  // }
-
   handleChangeStart(date){
     if(date !== null){
       let e = new Date(date);
       let month = e.getMonth()+1;
       let cdate = (e.getDate()+'.'+month+'.'+e.getFullYear());
-      //let parsedFrom = date.toJSON();
-      console.log(date);
+      this._startDate = date;
       console.log(cdate);
-      this._startDate = cdate;
+
+      // If the this._endDate has been set continue setting state
+      // else ignore and dont set the state if user hasnt set this._endDate
       if (this._endDate) {
         this.setState({ 
-          startDate: date,
+          startDate: this._startDate,
           endDate: this._endDate,
-          filteredViolations: matchSorter(this.state.violations, cdate, {keys: ['violationCreated']}) 
+          filteredViolations: this.state.violations.filter(function(record){
+            // This will check if our current DB records are >= selected startDate..
+            return record.violationCreated >= cdate
+          }), 
         })
       }
-
-      // this.setState(prevState => ({
-      //   dates: {
-      //       ...prevState.dates,
-      //       //[prevState.dates[0].f]: date,
-      //       f: date
-      //   },
-      // }));
-
-      this.setState({
-        dates: {
-          a: date,
-          b: new Date()
-        }
-      })
-
-      console.log(this.state);
     }
     else {
+      // TODO: There is a minor bug when clearing date window and re-attempting to filter date
       console.log("date variable is null");
       this.setState({
         startDate: null,
@@ -121,33 +104,69 @@ export default class Index extends Component {
       let e = new Date(date);
       let month = e.getMonth()+1;
       let cdate = (e.getDate()+'.'+Number(0)+month+'.'+e.getFullYear());
-      //let parsedTo = date.toJSON();
-      console.log(date);
+      this._endDate = date;
+
       console.log(cdate);
+      // If the this._startDate has been set continue setting state
+      // else ignore and dont set the state if user hasnt set this._startDate
+      if(this._startDate){
+        this.setState({
+          filteredViolations: this.state.violations.filter(function(record){
+            // This will check if our current DB records are <= selected startDate..
+            // and return the records
+            return record.violationCreated <= cdate
+          }), 
+          endDate: this._endDate,
+          startDate: this._startDate,
+          dates: {
+            a: this._startDate,
+            b: this._endDate,
+          },
+        })
 
-      this.setState({ 
-        endDate: date,
-        filteredViolations: matchSorter(this.state.violations, cdate, {keys: ['violationCreated']}) 
-      })
+        //filteredViolations: 
+        // _.filter (state.violations, function(record) {
+        //   return record.createdAt<=this._startDate.toISOString() && 
+        //          record.createdAt>=this._endDate.toISOString();
+        // })) 
 
-      // this.setState(prevState => ({
-      //   dates: {
-      //       ...prevState.dates,
-      //       [prevState.dates[0].endDate]: date,
-      //   },
-      // }));
+        // var new Array =  _.filter (homes, function(home) {
+        //     return home.price<=1000 && sqft>=500 && num_of_beds>=2 && num_of_baths>=2.5;
+        // });
+        
+        // this.state.violations.forEach(function(el){
+        //   console.log(el.createdAt);
+        // });
+
+        // console.log("====================");
+
+        // _.filter(this.state.violations, function(record){
+        //   let abc = record.createdAt>=startDate;
+        //   console.log(abc)
+        // })
+
+        // this._newArray = [...this.state.violations].filter(report => {
+        //     if (report.createdAt <= startDate) {
+        //         return report;
+        //     }
+        //     console.log(report.name)
+        //     console.log(startDate)
+        //     if(report.createdAt <= startDate && report.createdAt >= endDate ){
+        //       console.log(report.createdAt)
+        //     }
+        // });
+        //this.setState({currentReports: updatedReports});
+
+      }
     }
     else {
+      // TODO: There is a minor bug when clearing date window and re-attempting to filter date
       console.log("date variable is null");
       this.setState({
         endDate: null,
         filteredViolations: this.state.violations
       })
     }
-  }
-
-  componentWillMount(){
-    this.axiosGETRequest();
   }
 
   render() {
@@ -164,40 +183,14 @@ export default class Index extends Component {
         </Grid>
 
         <Grid container spacing={0} style={{background: "#FFFFFF", padding: '15px'}}>
-          <Grid item xs={12} md={6}>
-          
-          <AlphaDatePicker 
-            startDate={this.state.startDate} 
-            endDate={this.state.endDate} 
-            onChangeStart={this.handleChangeStart} 
-            onChangeEnd={this.handleChangeEnd} 
-            compareFromToDates={this.compareFromToDates}
-          />
-
-          {/* <DatePicker
-              className="inputCustom"
-              selected={this.state.startDate}
-              selectsStart
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              onChange={this.handleChangeStart}
-              placeholderText="Избери дата"
-              dateFormat="dd/MM/yyyy"
-          />
-          &nbsp;
-          &nbsp;
-          <DatePicker
-              className="inputCustom"
-              selected={this.state.endDate}
-              selectsEnd
-              startDate={this.state.startDate}
-              endDate={this.state.endDate}
-              onChange={this.handleChangeEnd}
-              minDate={this.state.startDate}
-              placeholderText="Избери дата"
-              dateFormat="dd/MM/yyyy"
-          /> */}
-
+          <Grid item xs={12} md={7}>
+            <AlphaDatePicker 
+              startDate={this.state.startDate} 
+              endDate={this.state.endDate} 
+              onChangeStart={this.handleChangeStart} 
+              onChangeEnd={this.handleChangeEnd} 
+              compareFromToDates={this.compareFromToDates}
+            />
           </Grid>
           <Grid item xs={12} md={3}>
             <Input
@@ -209,10 +202,12 @@ export default class Index extends Component {
               />
               <Icon className="searchIcon">search</Icon>
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={2}>
             <Paper className="xs-3 papperWrapper">
               <a onClick={() => alert("Exporting some data...")} 
-                  className="exportBtn" href="#!">ЕКСПОРТ <Icon style={{fontSize:"13px", position: "relative", top: "1px"}}>file_copy</Icon>
+                 className="exportBtn" href="#!">
+                    ЕКСПОРТ 
+                    <Icon style={{fontSize:"13px", position: "relative", top: "1px"}}>file_copy</Icon>
               </a>
             </Paper>
           </Grid>

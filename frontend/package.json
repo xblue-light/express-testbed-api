@@ -15,6 +15,7 @@
     "classnames": "^2.2.6",
     "date-fns": "2.0.0-alpha.36",
     "flow": "^0.2.3",
+    "immutable": "^4.0.0-rc.12",
     "jwt-decode": "^2.2.0",
     "match-sorter": "^3.1.1",
     "namor": "^1.1.2",
@@ -27,7 +28,8 @@
     "react-table": "^6.10.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-    "retire": "^1.6.3"
+    "retire": "^1.6.3",
+    "underscore": "^1.9.1"
   },
   "scripts": {
     "start": "react-scripts start",
