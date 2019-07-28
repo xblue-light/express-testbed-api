@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
-    name: {
+    firstName: {
         type: String,
         required: true
     },
@@ -14,13 +14,19 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
-    avatar: {
+    profilePicture: {
         type: String
     },
-    date: {
-        type: Date,
-        default: Date.now
-    }
+    roleName: {
+        type: String,
+        required: true,
+    },
+    status: {
+        type: String,
+        required: true,
+    },
+},
+{   timestamps: true
 });
 
 const User = mongoose.model('users', UserSchema);

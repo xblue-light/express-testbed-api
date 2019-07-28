@@ -104,19 +104,44 @@ const violationsSchema = new Schema({
         type: mongoose.SchemaTypes.ObjectId, ref: 'users',
         required: true
     },
-    labelDescriptionA: {type: String, required: false, maxlength: 50},
-    labelDescriptionB: {type: String, required: false, maxlength: 50},
-    labelDescriptionC: {type: String, required: false, maxlength: 50},
-    labelDescriptionD: {type: String, required: false, maxlength: 50},
-    labelDescriptionE: {type: String, required: false, maxlength: 50},
-    labelDescriptionF: {type: String, required: false, maxlength: 50},
-    labelDescriptionG: {type: String, required: false, maxlength: 50},
-    labelDescriptionH: {type: String, required: false, maxlength: 50},
-
+    labelDescriptionA: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionB: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionC: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionD: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionE: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionF: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionG: {
+        type: String, 
+        required: false, maxlength: 50
+    },
+    labelDescriptionH: {
+        type: String, 
+        required: false, maxlength: 50
+    },
 },
-{timestamps: true}
-);
+{   timestamps: true
+});
 
 violationsSchema.index({ user: 1, name: 1 }, { unique: true })
+
 const Violation = mongoose.model('violation', violationsSchema);
+
 module.exports = Violation;

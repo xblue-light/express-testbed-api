@@ -9,7 +9,7 @@ if (process.env.NODE_ENV !== 'production') {
   }
 
 mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true}).then(()  => {
-    console.log('Database is connected');
+    console.log('The database was successfully connected.');
 }, 
 error => {
     console.log('CANNOT connect to the database'+ error);
@@ -33,5 +33,5 @@ app.get('/', function(req, res) {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server is running on PORT ${PORT}`);
+    console.log(`Express server running on PORT ${PORT}`);
 });

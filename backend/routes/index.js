@@ -11,7 +11,7 @@ const User = require('../models/User');
 const List = require('../models/List');
 const Violation = require('../models/Violation');
 
-// Route => '/api/users/register'
+// REGISTER USER
 router.post('/register', function(req, res) {
 
     const { errors, isValid } = validateRegisterInput(req.body);
@@ -24,20 +24,23 @@ router.post('/register', function(req, res) {
     }).then(user => {
         if(user) {
             return res.status(400).json({
-                email: 'Email already exists'
+                email: 'Email already exists, please enter a valid email!'
             });
         }
         else {
-            const avatar = gravatar.url(req.body.email, {
+            const profilePicture = gravatar.url(req.body.email, {
                 s: '300',
                 r: 'pg',
                 d: 'mm'
             });
             const newUser = new User({
+                firstName: req.body.firstName,
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
-                avatar
+                profilePicture,
+                roleName: req.body.roleName,
+                status: req.body.status
             });
             
             bcrypt.genSalt(10, (err, salt) => {
@@ -48,10 +51,10 @@ router.post('/register', function(req, res) {
                         else {
                             newUser.password = hash;
                             newUser
-                                .save()
-                                .then(user => {
-                                    res.json(user)
-                                }); 
+                            .save()
+                            .then(user => {
+                                res.json(user)
+                            }); 
                         }
                     });
                 }
@@ -84,7 +87,11 @@ router.post('/login', (req, res) => {
                     const payload = {
                         id: user.id,
                         name: user.name,
-                        avatar: user.avatar
+                        username: user.username,
+                        firstName: user.firstName,
+                        profilePicture: user.profilePicture,
+                        role: user.role,
+                        roleName: user.roleName
                     }
                     jwt.sign(payload, 'secret', {
                         expiresIn: 3600
@@ -109,33 +116,93 @@ router.post('/login', (req, res) => {
 // GET LOGGED IN USER OBJECT
 router.get('/me', passport.authenticate('jwt', { session: false }), (req, res) => {
     return res.status(200).json({
-        name: req.user.name,
+        firstName: req.user.firstName,
         email: req.user.email,
+        roleName: req.user.roleName,
         id: req.user.id,
-        avatar: req.user.avatar
+        profilePicture: req.user.profilePicture,
     });
 });
 
 // GET ALL LISTS
-// router.get('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     try {
-//         const docs = await List
-//             .find({ createdBy: req.user.id })
-//             .lean()
-//             .exec();
+router.get('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        const docs = await List
+            .find({ createdBy: req.user.id })
+            .lean()
+            .exec();
 
-//         res.status(200).json(docs);
-//     } catch (e) {
-//         console.error(e);
-//         res.status(400).end();
-//     }
-// });
+        res.status(200).json(docs);
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
+
+
+// GET ALL USERS
+router.get('/usersList', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        const docs = await User
+            .find({})
+            .lean()
+            .exec();
+
+        res.status(200).json(docs);
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
+
+router.post('/usersList', async (req, res) => {
+    try {
+        const docs = await User
+            .find({ 
+                createdAt: {
+                    $gte: new Date(req.body.startDate), 
+                    $lte: new Date(req.body.endDate)
+                } 
+            })
+            .sort({ firstName: 'asc' })
+            .lean()
+            .exec();
+        res.status(200).json(docs);
+
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
 
 // GET ALL VIOLATION LIST
 router.get('/violation', passport.authenticate('jwt', { session: false }), async (req, res) => {
     try {
+
+        if(req.user.roleName === 'OPERATOR'){
+            const docs = await Violation
+            .find({})
+            .lean()
+            .exec();
+            res.status(200).json(docs);
+        }
+        else {
+            console.error("Unauthorized!");
+            res.status(401).end();
+        }
+        
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
+
+
+
+router.get('/violation/:status', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
         const docs = await Violation
-            .find({ createdBy: req.user.id })
+            .find({ status: req.params.status })
             .lean()
             .exec();
 
@@ -158,30 +225,31 @@ router.post('/violation', passport.authenticate('jwt', { session: false }), asyn
 });
 
 // POST LIST
-// router.post('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     try {
-//         const doc = await List.create({ ...req.body, createdBy: req.user.id });
-//         res.status(200).json(doc);
-//     } catch(e) {
-//         console.error(e);
-//         res.status(400).end();
-//     }
-// });
+router.post('/list', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        const doc = await List.create({ ...req.body, createdBy: req.user.id });
+        res.status(200).json(doc);
+    } catch(e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
 
 // REMOVE LIST
-// router.delete('/list/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     try {
-//         await List.findByIdAndDelete({ _id: req.params.id });
-//         res.status(200).json("List has been removed!");
-//     } catch (e) {
-//         console.error(e);
-//         res.status(400).end();
-//     }
-// });
+router.delete('/list/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        await List.findByIdAndDelete({ _id: req.params.id });
+        res.status(200).json("List has been removed!");
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
 
 
 // VIOLATION DELETE
-router.delete('/violation/delete/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+router.delete('/violation/delete/:id', passport.authenticate('jwt', { session: false }), 
+    async (req, res) => {
     try {
         await Violation.findByIdAndDelete({ _id: req.params.id });
         res.status(200).json("Violation record has been removed!");
@@ -192,15 +260,15 @@ router.delete('/violation/delete/:id', passport.authenticate('jwt', { session: f
 });
 
 // GET LIST BY ID
-// router.get('/list/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
-//     try {
-//         const doc = await List.findById({ _id: req.params.id });
-//         res.status(200).json(doc);
-//     } catch (e) {
-//         console.error(e);
-//         res.status(400).end();
-//     }
-// });
+router.get('/list/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+    try {
+        const doc = await List.findById({ _id: req.params.id });
+        res.status(200).json(doc);
+    } catch (e) {
+        console.error(e);
+        res.status(400).end();
+    }
+});
 
 // GET VIOLATION BY ID
 router.get('/violation/edit/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
