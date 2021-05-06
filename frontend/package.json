@@ -29,7 +29,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "retire": "^1.6.3",
-    "underscore": "^1.9.1"
+    "underscore": "^1.12.1"
   },
   "scripts": {
     "start": "react-scripts start",
